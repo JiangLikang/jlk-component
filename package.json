@@ -1,6 +1,6 @@
 {
   "private": false,
-  "name": "J-component",
+  "name": "jlk-component",
   "version": "1.0.7",
   "sideEffects": false,
   "scripts": {

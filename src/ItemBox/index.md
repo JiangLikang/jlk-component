@@ -2,7 +2,7 @@
 
 ```jsx
 import React from 'react';
-import { ItemBox } from 'J-component';
+import { ItemBox } from 'jlk-component';
 
 const data = [
   { key: '1', label: '数据一' },

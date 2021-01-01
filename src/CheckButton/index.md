@@ -2,7 +2,7 @@
 
 ```jsx
 import React from 'react';
-import { CheckButton } from 'J-component';
+import { CheckButton } from 'jlk-component';
 
 const options = [
   { key: '1', label: '数据一' },

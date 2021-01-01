@@ -1,4 +1,4 @@
-# J-compoment
+# jlk-compoment
 
 ## Getting Started
 

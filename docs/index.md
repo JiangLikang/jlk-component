@@ -5,5 +5,5 @@
 ### 安装
 
 ```bash
-npm i J-component -S
+npm i jlk-component -S
 ```
