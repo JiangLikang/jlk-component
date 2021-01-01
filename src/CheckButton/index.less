@@ -1,0 +1,38 @@
+.container {
+  :global {
+  }
+  .label {
+    display: inline-block;
+    color: #1e283c;
+    font-weight: 500;
+    margin-right: 16px;
+  }
+  .group {
+    display: inline-block;
+    .optionItem {
+      padding: 9px 16px;
+      color: #6e7382;
+      background-color: #eeeff4;
+      display: inline-block;
+      margin-right: 8px;
+      margin-top: 8px;
+      border-radius: 4px;
+      line-height: 14px;
+      font-size: 14px;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+    .optionItemActive {
+      background: #2b82d8;
+      color: #fff;
+      font-weight: 500;
+    }
+    .optionItemDisable {
+      color: rgba(0, 0, 0, 0.25);
+      &:hover {
+        cursor: not-allowed;
+      }
+    }
+  }
+}
