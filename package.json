@@ -5,6 +5,7 @@
   "sideEffects": false,
   "scripts": {
     "start": "dumi dev",
+    "One-stop-service": "npm version patch && npm run build && npm publish && dumi build && gh-pages -d docs-dist",
     "version:update": "npm version patch",
     "release": "npm run build && npm publish",
     "docs:deploy": "dumi build && gh-pages -d docs-dist",
