@@ -1,6 +1,11 @@
-## 标签型多选组件
+## 标签型单选/多选组件
 
 ```jsx
+/**
+ * title: 单选用法
+ *
+ */
+
 import React from 'react';
 import { CheckButton } from 'jlk-component';
 
@@ -16,9 +21,11 @@ const options = [
 export default class Demo extends React.Component {
   state = {
     options: options,
+    selectedKey: '2',
   };
 
   handleChange = checkedValue => {
+    this.setState({ selectedKey: checkedValue });
     console.log('checkedValue', checkedValue);
   };
 
@@ -27,6 +34,50 @@ export default class Demo extends React.Component {
       <CheckButton
         label="选项组"
         options={this.state.options}
+        selectedKey={this.state.selectedKey}
+        onChange={this.handleChange}
+      />
+    );
+  }
+}
+```
+
+```jsx
+/**
+ * title: 多选用法
+ * desc: 可用 `multiple` 属性开启多选
+ */
+
+import React from 'react';
+import { CheckButton } from 'jlk-component';
+
+const options = [
+  { key: '1', label: '数据一' },
+  { key: '2', label: '数据二' },
+  { key: '3', label: '数据三' },
+  { key: '4', label: '数据四' },
+  { key: '5', label: '数据五' },
+  { key: '6', label: '数据六', disabled: true },
+];
+
+export default class Demo extends React.Component {
+  state = {
+    options: options,
+    selectedKeys: ['1'],
+  };
+
+  handleChange = checkedValue => {
+    console.log('checkedValue', checkedValue);
+    this.setState({ selectedKeys: checkedValue });
+  };
+
+  render() {
+    return (
+      <CheckButton
+        label="选项组"
+        multiple
+        options={this.state.options}
+        selectedKeys={this.state.selectedKeys}
         onChange={this.handleChange}
       />
     );
@@ -36,10 +87,13 @@ export default class Demo extends React.Component {
 
 ### API
 
-| 参数     |       说明       |                         类型 | 默认值 |
-| -------- | :--------------: | ---------------------------: | -----: |
-| options  |      选项组      |                        Array |   必填 |
-| onChange | 选项变化时的回调 | Function: checkedValue => {} |      - |
+| 参数       |       说明       |                         类型 | 默认值 |
+| ---------- | :--------------: | ---------------------------: | -----: |
+| options    |      选项组      |                        Array |   必填 |
+| multiple   |   是否开启多选   |                      Boolean |  false |
+| selectKey  | 单选模式选中的值 |                       String |      - |
+| selectKeys | 多选模式选中的值 |               Array:[String] |      - |
+| onChange   | 选项变化时的回调 | Function: checkedValue => {} |      - |
 
 ### options.Item
 

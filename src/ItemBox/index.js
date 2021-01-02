@@ -23,35 +23,36 @@ class Index extends Component {
     const { data } = this.props;
     return (
       <div className={styles.container}>
-        {data.map(item => {
-          return (
-            <div
-              className={classnames(
-                styles.item,
-                item.disabled ? styles.disableItem : '',
-              )}
-              key={item.key}
-            >
-              {item.label.length > 20 ? (
-                <Tooltip placement="top" title={item.label}>
-                  <span className={styles.label}>
-                    {item.label.substring(0, 20) + '...'}
-                  </span>
-                </Tooltip>
-              ) : (
-                <span className={styles.label}>{item.label}</span>
-              )}
-              <Icon
-                type="close"
-                onClick={this.handleItemClick.bind(this, item)}
+        {Array.isArray(data) &&
+          data.map(item => {
+            return (
+              <div
                 className={classnames(
-                  styles.close,
+                  styles.item,
                   item.disabled ? styles.disableItem : '',
                 )}
-              />
-            </div>
-          );
-        })}
+                key={item.key}
+              >
+                {item.label.length > 20 ? (
+                  <Tooltip placement="top" title={item.label}>
+                    <span className={styles.label}>
+                      {item.label.substring(0, 20) + '...'}
+                    </span>
+                  </Tooltip>
+                ) : (
+                  <span className={styles.label}>{item.label}</span>
+                )}
+                <Icon
+                  type="close"
+                  onClick={this.handleItemClick.bind(this, item)}
+                  className={classnames(
+                    styles.close,
+                    item.disabled ? styles.disableItem : '',
+                  )}
+                />
+              </div>
+            );
+          })}
       </div>
     );
   }

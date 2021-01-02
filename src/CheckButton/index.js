@@ -1,54 +1,59 @@
 import React, { Component } from 'react';
 import styles from './index.less';
 import classnames from 'classnames';
-import PropTypes from 'prop-types';
+import PropTypes, { element } from 'prop-types';
 
 class Index extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      selectedKeys: [],
-    };
+    this.state = {};
   }
 
   handleOptionClick = option => {
     if (option.disabled) {
       return;
     }
-    const { onChange } = this.props;
-    const { selectedKeys } = this.state;
-    let resKeys = [];
-    if (selectedKeys.some(v => v === option.key)) {
-      resKeys = selectedKeys.filter(i => i !== option.key);
+    const { onChange, multiple, selectedKeys } = this.props;
+
+    if (multiple) {
+      let resKeys = [];
+      if (selectedKeys.some(v => v === option.key)) {
+        resKeys = selectedKeys.filter(i => i !== option.key);
+      } else {
+        resKeys = selectedKeys.concat([option.key]);
+      }
+      onChange && onChange(resKeys);
     } else {
-      resKeys = selectedKeys.concat([option.key]);
+      onChange && onChange(option.key);
     }
-    this.setState({ selectedKeys: resKeys });
-    onChange && onChange(resKeys);
   };
 
   render() {
-    const { label, options } = this.props;
-    const { selectedKeys } = this.state;
-    const Options = options.map(item => {
-      let isSelect = selectedKeys.some(v => v === item.key);
-      return (
-        <div
-          className={classnames(
-            isSelect ? styles.optionItemActive : '',
-            styles.optionItem,
-            item.disabled ? styles.optionItemDisable : '',
-          )}
-          onClick={this.handleOptionClick.bind(this, item)}
-          key={item.key}
-        >
-          {item?.label}
-        </div>
-      );
-    });
+    const { label, options, multiple, selectedKey, selectedKeys } = this.props;
+
+    const Options =
+      Array.isArray(options) &&
+      options.map(item => {
+        let isSelect = multiple
+          ? selectedKeys.some(v => v === item.key)
+          : selectedKey === item.key;
+        return (
+          <div
+            className={classnames(
+              isSelect ? styles.optionItemActive : '',
+              styles.optionItem,
+              item.disabled ? styles.optionItemDisable : '',
+            )}
+            onClick={this.handleOptionClick.bind(this, item)}
+            key={item.key}
+          >
+            {item?.label}
+          </div>
+        );
+      });
     return (
       <div className={styles.container}>
-        <div className={styles.label}>{label}:</div>
+        {label ? <div className={styles.label}>{label}:</div> : null}
         <div className={styles.group}>{Options}</div>
       </div>
     );
@@ -64,6 +69,9 @@ Index.propTypes = {
     }),
   ).isRequired,
   label: PropTypes.string,
+  selectedKey: PropTypes.oneOfType([PropTypes.string.isRequired]),
+  selectedKeys: PropTypes.arrayOf(PropTypes.string.isRequired),
+  multiple: PropTypes.bool,
   onChange: PropTypes.func,
 };
 
