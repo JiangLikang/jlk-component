@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styles from './index.less';
 import classnames from 'classnames';
-import PropTypes, { element } from 'prop-types';
+import PropTypes from 'prop-types';
 
 class Index extends Component {
   constructor(props) {

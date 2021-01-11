@@ -101,6 +101,6 @@ export default class Demo extends React.Component {
 
 | 参数     |          说明          |    类型 | 默认值 |
 | -------- | :--------------------: | ------: | -----: |
-| label    |   每项数据展示的标签   |  String |      - |
-| key      | 每项数据对应的唯一 key |  String |      - |
+| label    |   每项数据展示的标签   |  String |   必填 |
+| key      | 每项数据对应的唯一 key |  String |   必填 |
 | disabled |       是否不可用       | Boolean |  false |

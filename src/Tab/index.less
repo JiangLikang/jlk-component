@@ -1,0 +1,59 @@
+.container {
+  height: 45px;
+  background-color: #ffffff;
+  border-bottom: 1px solid rgba(30, 40, 60, 0.1);
+  width: 100%;
+  display: flex;
+  padding: 0 10px;
+  .tabItem {
+    display: inline-block;
+    height: 100%;
+    flex: 1;
+    .itemContent {
+      height: 100%;
+      font-size: 14px;
+      font-family: PingFang-SC-Medium, PingFang-SC;
+      font-weight: 400;
+      color: #6e7382;
+      display: flex;
+      flex-direction: column-reverse;
+      // justify-content: space-evenly;
+      align-items: center;
+      cursor: pointer;
+      .label {
+        position: relative;
+        padding-bottom: 12px;
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 50%;
+          width: 0;
+          height: 100%;
+          border-bottom: 2px solid #4378be;
+          transition: 0.2s all linear;
+        }
+      }
+      .activeTabKey {
+        &::before {
+          width: 100%;
+          left: 0;
+        }
+        & ~ .label::before {
+          left: 0;
+        }
+      }
+    }
+    .activeItem {
+      color: #4378be;
+    }
+    .disabled {
+      color: rgba(0, 0, 0, 0.25);
+      &:hover {
+        cursor: not-allowed;
+      }
+    }
+  }
+  :global {
+  }
+}
