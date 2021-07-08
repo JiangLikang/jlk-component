@@ -1,3 +1,3 @@
-export { default as ItemBox } from './ItemBox';
-export { default as CheckButton } from './CheckButton';
-export { default as Tab } from './Tab';
+export { default as ItemBox } from './components/ItemBox';
+export { default as CheckButton } from './components/CheckButton';
+export { default as Tab } from './components/Tab';
