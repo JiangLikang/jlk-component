@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "jlk-component",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "sideEffects": false,
   "scripts": {
     "start": "dumi dev",
