@@ -222,9 +222,9 @@ worker.port.postMessage('message');
 1. ShareWorker.js
 
 ```js
-var clients = [];
+var clients = []; // 记录接入到本共享线程的所有接口
 onconnect = function(e) {
-  var port = e.ports[0];
+  var port = e.ports[0]; // 获取当前接口
   clients.push(port);
   port.addEventListener('message', function(e) {
     for (var i = 0; i < clients.length; i++) {
@@ -232,7 +232,7 @@ onconnect = function(e) {
       eElement.postMessage(e.data);
     }
   });
-  port.start();
+  port.start(); // 当接口使用addEventListener设置监听时，需要显式启用
 };
 ```
 
