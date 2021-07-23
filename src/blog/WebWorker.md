@@ -174,6 +174,23 @@ worker.onmessage = function(e) {
 
 上面代码中，先将嵌入网页的脚本代码，转成一个二进制对象，然后为这个二进制对象生成 URL，再让 Worker 加载这个 URL。这样就做到了，主线程和 Worker 的代码都在同一个网页上面。
 
+函数式写法
+
+```js
+function createWorker(f) {
+  var blob = new Blob(['(' + f.toString() + ')()']);
+  var url = window.URL.createObjectURL(blob);
+  var worker = new Worker(url);
+  return worker;
+}
+var worker = createWorker(() => {
+  //  ...Web Worker task
+});
+worker.onmessage = e => {
+  console.log(e.data);
+};
+```
+
 ## 共享线程 SharedWorker
 
 共享线程是为了避免线程的重复创建和销毁过程，降低了系统性能的消耗，共享线程 SharedWorker 可以同时有多个页面的线程链接。
