@@ -174,7 +174,7 @@ worker.onmessage = function(e) {
 
 上面代码中，先将嵌入网页的脚本代码，转成一个二进制对象，然后为这个二进制对象生成 URL，再让 Worker 加载这个 URL。这样就做到了，主线程和 Worker 的代码都在同一个网页上面。
 
-函数式写法
+函数式写法:
 
 ```js
 function createWorker(f) {
@@ -183,9 +183,11 @@ function createWorker(f) {
   var worker = new Worker(url);
   return worker;
 }
+
 var worker = createWorker(() => {
   //  ...Web Worker task
 });
+
 worker.onmessage = e => {
   console.log(e.data);
 };
