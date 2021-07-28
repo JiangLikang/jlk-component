@@ -43,7 +43,7 @@ class Promise {
       onReject(this.reason);
     }
     if (this.state == 'pending') {
-      this.onRejectCbs.push(onFulfilled(this.value));
+      this.onResolveCbs.push(onFulfilled(this.value));
       this.onRejectCbs.push(onReject(this.reason));
     }
   }
