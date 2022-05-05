@@ -1,4 +1,4 @@
-# sku
+# SKU
 
 ![sku.png](https://i.loli.net/2020/06/21/xld2cADgjnuWF7J.png)
 
@@ -138,100 +138,82 @@ specCombinationList: [
 
 2、根据可选规格组合(`specCombinationList`)填写顶点的值
 
-3、获得所有可选顶点，然后根据可选顶点填写同级顶点的值
+3、获得所有可选顶点。
 
 ### 创建邻接矩阵
 
 首先，我们需要提供一个类来创建邻接矩阵。一个邻接矩阵，首先需要传入一个顶点数组：`vertex`,需要一个用来装邻接矩阵的数组：`adjoinArray`。刚刚我们上面说到了，这个类还必须提供计算`并集`和`交集`的方法：
 
 ```ts
-type AdjoinType = Array<string>;
+export type AdjoinType = Array<string>;
 
-class AdjoinMatrix {
-  vertex: AdjoinType; // 顶点数组
-  quantity: number; // 矩阵长度
-  adjoinArray: Array<number>; // 矩阵数组
+export default class AdjoinMatrix {
+  vertexes: AdjoinType; // 顶点数组
+  adjoinArray: Array<Array<0 | 1>>; // 矩阵数组
 
-  constructor(vertx: AdjoinType) {
-    this.vertex = vertx;
-    this.quantity = this.vertex.length;
-    this.adjoinArray = [];
-    this.init();
-  }
-  // 初始化数组
-  init() {
-    this.adjoinArray = Array(this.quantity * this.quantity).fill(0);
+  constructor(vertexes: AdjoinType) {
+    // 初始化邻接矩阵
+    this.vertexes = vertexes;
+    const quantity = vertexes.length;
+    this.adjoinArray = Array(quantity).fill(Array(quantity).fill(0));
   }
 
   /*
-   * @param id string
-   * @param sides Array<string>
-   *  传入一个顶点，和当前顶点可达的顶点数组，将对应位置置为1
+   * 填写邻接矩阵的值
    */
-  setAdjoinVertexs(id: string, sides: AdjoinType) {
-    const pIndex = this.vertex.indexOf(id);
-    sides.forEach(item => {
-      const index = this.vertex.indexOf(item);
-      this.adjoinArray[pIndex * this.quantity + index] = 1;
+  setVertexAdjoins(vertex: string, adjoins: AdjoinType) {
+    const vIndex = this.vertexes.indexOf(vertex);
+    adjoins.forEach(adjoin => {
+      const aIndex = this.vertexes.indexOf(adjoin);
+      const newCol = [...this.adjoinArray[vIndex]];
+      newCol.splice(aIndex, 1, 1);
+      this.adjoinArray[vIndex] = newCol;
     });
   }
 
   /*
-   * @param id string
    * 传入顶点的值，获取该顶点的列
    */
-  getVertexCol(id: string) {
-    const index = this.vertex.indexOf(id);
-    const col: Array<number> = [];
-    this.vertex.forEach((item, pIndex) => {
-      col.push(this.adjoinArray[index + this.quantity * pIndex]);
-    });
-    return col;
+  getVertexCol(vertex: string) {
+    const index = this.vertexes.indexOf(vertex);
+    return this.adjoinArray[index];
   }
 
   /*
-   * @param params Array<string>
-   * 传入一个顶点数组，求出该数组所有顶点的列的合
-   */
-  getColSum(params: AdjoinType) {
-    const paramsVertex = params.map(id => this.getVertexCol(id));
-    const paramsVertexSum: Array<number> = [];
-    this.vertex.forEach((item, index) => {
-      const rowtotal = paramsVertex
-        .map(value => value[index])
-        .reduce((total, current) => {
-          total += current || 0;
-          return total;
-        }, 0);
-      paramsVertexSum.push(rowtotal);
-    });
-    return paramsVertexSum;
-  }
-
-  /*
-   *  @param params Array<string>
    * 传入一个顶点数组，求出并集
    */
-  getCollection(params: AdjoinType) {
-    const paramsColSum = this.getColSum(params);
-    let collections: AdjoinType = [];
-    paramsColSum.forEach((item, index) => {
-      if (item && this.vertex[index]) collections.push(this.vertex[index]);
-    });
+  getCollection(vertexes: AdjoinType) {
+    const vertexCols = vertexes.map(v => this.getVertexCol(v));
+    const collections: AdjoinType = this.vertexes.reduce(
+      (pre: AdjoinType, cur, index) => {
+        const row = vertexCols.map(col => col[index]);
+        if (row.some(Boolean)) {
+          return [...pre, cur];
+        } else {
+          return pre;
+        }
+      },
+      [],
+    );
     return collections;
   }
 
   /*
-   *  @param params Array<string>
    * 传入一个顶点数组，求出交集
    */
-  getUnions(params: AdjoinType) {
-    const paramsColSum = this.getColSum(params);
-    let unions: AdjoinType = [];
-    paramsColSum.forEach((item, index) => {
-      if (item >= params.length && this.vertex[index])
-        unions.push(this.vertex[index]);
-    });
+  getUnions(vertexes: AdjoinType) {
+    const vertexCols = vertexes.map(v => this.getVertexCol(v));
+    const unions: AdjoinType = this.vertexes.reduce(
+      (pre: AdjoinType, cur, index) => {
+        const row = vertexCols.map(col => col[index]);
+        if (row.every(Boolean)) {
+          return [...pre, cur];
+        } else {
+          return pre;
+        }
+      },
+      [],
+    );
     return unions;
   }
 }
@@ -244,14 +226,10 @@ class AdjoinMatrix {
 我们这个多规格选择的邻接矩阵，需要提供一个查询可选顶点的方法：`getSpecscOptions`
 
 ```ts
-// import AdjoinMatrix from './adjoin-martix';
-// import { AdjoinType } from './adjoin-martix';
-// import {
-//   SpecCategoryType,
-//   CommoditySpecsType,
-// } from '../redux/reducer/spec-reducer';
+import AdjoinMatrix from '../../packages/sku/utils/adjoin-martix.ts';
+import { AdjoinType } from '../../packages/sku/utils/adjoin-martix.ts';
 
-class SpecAdjoinMatrix extends AdjoinMatrix {
+export default class SpecAdjoinMatrix extends AdjoinMatrix {
   specList: Array<CommoditySpecsType>;
   specCombinationList: Array<SpecCategoryType>;
 
@@ -267,58 +245,33 @@ class SpecAdjoinMatrix extends AdjoinMatrix {
     );
     this.specList = specList;
     this.specCombinationList = specCombinationList;
-    // 根据可选规格列表矩阵创建
+    // 根据可选规格列表创建邻接矩阵
     this.initSpec();
-    // 同级顶点创建
-    this.initSameLevel();
   }
 
   /**
    * 根据可选规格组合填写邻接矩阵的值
    */
   initSpec() {
-    this.specCombinationList.forEach(item => {
-      this.fillInSpec(item.specs);
+    this.specCombinationList.forEach(({ specs }) => {
+      specs.forEach(s => this.setVertexAdjoins(s, specs));
     });
-  }
-  // 填写同级点
-  initSameLevel() {
-    // 获得初始所有可选项
-    const specsOption = this.getCollection(this.vertex);
-    this.specList.forEach(item => {
-      const params: AdjoinType = [];
-      // 获取同级别顶点
-      item.list.forEach(value => {
-        if (specsOption.includes(value)) params.push(value);
-      });
-      // 同级点位创建
-      this.fillInSpec(params);
-    });
-  }
-  /*
-   * 传入顶点数组，查询出可选规格
-   * @param params
-   */
-  getSpecscOptions(params: AdjoinType) {
-    let specOptionCanchoose: AdjoinType = [];
-    if (params.some(Boolean)) {
-      // 过滤一下选项
-      specOptionCanchoose = this.getUnions(params.filter(Boolean));
-    } else {
-      // 所有可选项
-      specOptionCanchoose = this.getCollection(this.vertex);
-    }
-    return specOptionCanchoose;
   }
 
-  /**
-   *
-   * @param {*} params [key, key]
+  /*
+   * @params
+   * 传入顶点数组，查询出可选规格
    */
-  fillInSpec(params: AdjoinType) {
-    params.forEach(param => {
-      this.setAdjoinVertexs(param, params);
-    });
+  getSpecscOptions(vertexes: AdjoinType) {
+    let specOptionCanchoose: AdjoinType = [];
+    if (vertexes.some(Boolean)) {
+      // 获取可选项（交集）
+      specOptionCanchoose = this.getUnions(vertexes);
+    } else {
+      // 所有可选项
+      specOptionCanchoose = this.getCollection(this.vertexes);
+    }
+    return specOptionCanchoose;
   }
 }
 ```
@@ -328,19 +281,15 @@ class SpecAdjoinMatrix extends AdjoinMatrix {
 好了到了这一步，我们已经可以在页面中使用这两个类了：
 
 ```tsx
-// import React, { useState, useMemo } from 'react';
-// import { useSelector } from 'react-redux';
-// import { RootState } from '../redux/reducer/root-reducer';
-// import SpecAdjoinMatrix from '../utils/spec-adjoin-martix';
-// import './spec.css';
+import React, { useState, useMemo, useCallback } from 'react';
+import SpecAdjoinMatrix from '../../packages/sku/utils/spec-adjoin-martix.ts';
+import '../../packages/sku/spec.css';
+import { specList, specCombinationList } from '../../packages/sku/data.ts';
 const classNames = require('classnames');
 
 const Spec: React.FC = () => {
-  const { specList, specCombinationList } = useSelector(
-    (state: RootState) => state.spec,
-  );
   // 已选择的规格，长度为规格列表的长度
-  const [specsS, setSpecsS] = useState(Array(specList.length).fill(''));
+  const [specsS, setSpecsS] = useState<Set<string>>(new Set([]));
 
   // 创建一个规格矩阵
   const specAdjoinMatrix = useMemo(
@@ -348,15 +297,26 @@ const Spec: React.FC = () => {
     [specList, specCombinationList],
   );
   // 获得可选项表
-  const optionSpecs = specAdjoinMatrix.getSpecscOptions(specsS);
+  const optionSpecs = useMemo(
+    () => specAdjoinMatrix.getSpecscOptions(Array.from(specsS)),
+    [specsS],
+  );
 
-  const handleClick = function(bool: boolean, text: string, index: number) {
-    // 排除可选规格里面没有的规格
-    if (specsS[index] !== text && !bool) return;
-    // 根据text判断是否已经被选中了
-    specsS[index] = specsS[index] === text ? '' : text;
-    setSpecsS(specsS.slice());
-  };
+  const handleClick = useCallback(
+    function(bool: boolean, text: string) {
+      // 排除可选规格里面没有的规格
+      if (!bool) return;
+      // 根据text判断是否已经被选中了
+      const newSpecsS = new Set(specsS);
+      if (specsS.has(text)) {
+        newSpecsS.delete(text);
+      } else {
+        newSpecsS.add(text);
+      }
+      setSpecsS(newSpecsS);
+    },
+    [specsS],
+  );
 
   return (
     <div className="container">
@@ -366,16 +326,16 @@ const Spec: React.FC = () => {
           <div className="specBox">
             {list.map((value, i) => {
               const isOption = optionSpecs.includes(value); // 当前规格是否可选
-              const isActive = specsS.includes(value); // 当前规格是否被选
+              const isActive = specsS.has(value); // 当前规格是否被选
               return (
                 <span
                   key={i}
                   className={classNames({
-                    specOption: isOption,
-                    specAction: isActive,
+                    specOption: true,
+                    specActive: isActive,
                     specDisabled: !isOption,
                   })}
-                  onClick={() => handleClick(isOption, value, index)}
+                  onClick={() => handleClick(isOption, value)}
                 >
                   {value}
                 </span>
@@ -387,9 +347,11 @@ const Spec: React.FC = () => {
     </div>
   );
 };
+
+export default Spec;
 ```
 
-好了，打完收工了，如果有小伙伴想看实现效果，可以查看[这里](https://codesandbox.io/s/sku-algorithm-pionk?file=/src/redux/reducer/spec-reducer.ts)，如果有小伙伴想把代码拉到本地看看，那么请点击[这里](https://github.com/xieyezi/sku-algorithm)
+好了，打完收工了。江湖规矩附上源码[传送门](https://github.com/JiangLikang/adjoin-matrix-sku);
 
 ## 总结
 
