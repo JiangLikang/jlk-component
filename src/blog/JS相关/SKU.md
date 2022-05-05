@@ -244,12 +244,12 @@ export default class AdjoinMatrix {
 我们这个多规格选择的邻接矩阵，需要提供一个查询可选顶点的方法：`getSpecscOptions`
 
 ```ts
-import AdjoinMatrix from './adjoin-martix';
-import { AdjoinType } from './adjoin-martix';
-import {
-  SpecCategoryType,
-  CommoditySpecsType,
-} from '../redux/reducer/spec-reducer';
+// import AdjoinMatrix from './adjoin-martix';
+// import { AdjoinType } from './adjoin-martix';
+// import {
+//   SpecCategoryType,
+//   CommoditySpecsType,
+// } from '../redux/reducer/spec-reducer';
 
 export default class SpecAdjoinMatrix extends AdjoinMatrix {
   specList: Array<CommoditySpecsType>;
@@ -328,11 +328,11 @@ export default class SpecAdjoinMatrix extends AdjoinMatrix {
 好了到了这一步，我们已经可以在页面中使用这两个类了：
 
 ```tsx
-import React, { useState, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/reducer/root-reducer';
-import SpecAdjoinMatrix from '../utils/spec-adjoin-martix';
-import './spec.css';
+// import React, { useState, useMemo } from 'react';
+// import { useSelector } from 'react-redux';
+// import { RootState } from '../redux/reducer/root-reducer';
+// import SpecAdjoinMatrix from '../utils/spec-adjoin-martix';
+// import './spec.css';
 const classNames = require('classnames');
 
 const Spec: React.FC = () => {
