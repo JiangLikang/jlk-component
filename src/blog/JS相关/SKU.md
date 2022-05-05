@@ -1,4 +1,4 @@
-# 商品多规格选择-前端 sku 算法
+# sku
 
 ![sku.png](https://i.loli.net/2020/06/21/xld2cADgjnuWF7J.png)
 
@@ -145,9 +145,9 @@ specCombinationList: [
 首先，我们需要提供一个类来创建邻接矩阵。一个邻接矩阵，首先需要传入一个顶点数组：`vertex`,需要一个用来装邻接矩阵的数组：`adjoinArray`。刚刚我们上面说到了，这个类还必须提供计算`并集`和`交集`的方法：
 
 ```ts
-export type AdjoinType = Array<string>;
+type AdjoinType = Array<string>;
 
-export default class AdjoinMatrix {
+class AdjoinMatrix {
   vertex: AdjoinType; // 顶点数组
   quantity: number; // 矩阵长度
   adjoinArray: Array<number>; // 矩阵数组
@@ -251,7 +251,7 @@ export default class AdjoinMatrix {
 //   CommoditySpecsType,
 // } from '../redux/reducer/spec-reducer';
 
-export default class SpecAdjoinMatrix extends AdjoinMatrix {
+class SpecAdjoinMatrix extends AdjoinMatrix {
   specList: Array<CommoditySpecsType>;
   specCombinationList: Array<SpecCategoryType>;
 
@@ -387,8 +387,6 @@ const Spec: React.FC = () => {
     </div>
   );
 };
-
-export default Spec;
 ```
 
 好了，打完收工了，如果有小伙伴想看实现效果，可以查看[这里](https://codesandbox.io/s/sku-algorithm-pionk?file=/src/redux/reducer/spec-reducer.ts)，如果有小伙伴想把代码拉到本地看看，那么请点击[这里](https://github.com/xieyezi/sku-algorithm)
