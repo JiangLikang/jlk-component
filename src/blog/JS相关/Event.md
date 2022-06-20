@@ -3,23 +3,20 @@ type Subscription<T> = (val?: T) => void;
 type EventType = string;
 
 class EventEmitter<T> {
-  map: Record<EventType, Set<Subscription<T>>> = {};
-
+  map: Map<EventType, Set<Subscription<T>>> = new Map();
   on(type: EventType, handler: Subscription<T>) {
-    this.map[type] = (this.map[type] || new Set()).add(handler);
+    this.map.set(type, (this.map.get(type) || new Set()).add(handler));
   }
-
   emit(type: EventType, data?: T) {
-    this.map[type] && this.map[type].forEach(handler => handler(data));
+    this.map.get(type) && this.map.get(type)!.forEach(handler => handler(data));
   }
-
   off(type: EventType, handler?: Subscription<T>) {
-    const handlers = this.map[type];
+    const handlers = this.map.get(type);
     if (handlers) {
-      if (!handler) {
-        delete this.map[type];
-      } else {
+      if (handler) {
         handlers.delete(handler);
+      } else {
+        this.map.delete(type);
       }
     }
   }
