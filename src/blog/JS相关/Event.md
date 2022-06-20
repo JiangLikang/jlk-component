@@ -8,7 +8,7 @@ class EventEmitter<T> {
     this.map.set(type, (this.map.get(type) || new Set()).add(handler));
   }
   emit(type: EventType, data?: T) {
-    this.map.get(type) && this.map.get(type)!.forEach(handler => handler(data));
+    this.map.get(type)?.forEach(handler => handler(data));
   }
   off(type: EventType, handler?: Subscription<T>) {
     const handlers = this.map.get(type);
