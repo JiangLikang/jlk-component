@@ -36,16 +36,42 @@ class Promise {
   }
 
   then(onFulfilled, onReject) {
-    if (this.state == 'fulfilled') {
-      onFulfilled(this.value);
-    }
-    if (this.state == 'reject') {
-      onReject(this.reason);
-    }
-    if (this.state == 'pending') {
-      this.onResolveCbs.push(onFulfilled(this.value));
-      this.onRejectCbs.push(onReject(this.reason));
-    }
+    return new Promise((resolve, reject) => {
+      const successHandler = () => {
+        try {
+          const nextObj = onFulfilled(this.value);
+          resolvePromise(nextObj, resolve, reject);
+        } catch (e) {
+          reject(e);
+        }
+      };
+      const failHandler = () => {
+        try {
+          const nextObj = onReject(this.reason);
+          resolvePromise(nextObj, resolve, reject);
+        } catch (e) {
+          reject(e);
+        }
+      };
+      if (this.state == 'fulfilled') {
+        successHandler();
+      }
+      if (this.state == 'reject') {
+        failHandler();
+      }
+      if (this.state == 'pending') {
+        this.onResolveCbs.push(successHandler);
+        this.onRejectCbs.push(failHandler);
+      }
+    });
+  }
+}
+
+function resolvePromise(nextObj, resolve, reject) {
+  if (nextObj instanceof MyPromise) {
+    nextObj.then(resolve, reject);
+  } else {
+    resolve(nextObj);
   }
 }
 ```
