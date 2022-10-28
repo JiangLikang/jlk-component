@@ -229,3 +229,42 @@ function limitWorker(data, handler, limit) {
 
 limitWorker(urls, urlHandler, 3);
 ```
+
+```ts
+function concurRequest(asyncTasks: Function[], maxNum: number) {
+  return new Promise(resolve => {
+    if (asyncTasks.length === 0) {
+      resolve([]);
+      return;
+    }
+    const results: any[] = [];
+    let index = 0; // 下一个任务的下标
+    let count = 0; // 当前完成的任务数量
+    async function request() {
+      if (index === asyncTasks.length) {
+        return;
+      }
+      const i = index;
+      const task = asyncTasks[index];
+      index++;
+      try {
+        const ret = await task();
+        results[i] = ret;
+      } catch (err) {
+        results[i] = err;
+      } finally {
+        // 判断是否所有任务都已完成
+        count++;
+        if (count === asyncTasks.length) {
+          resolve(results);
+        }
+        request();
+      }
+    }
+    const times = Math.max(maxNum, asyncTasks.length);
+    for (let i = 0; i < times; i++) {
+      request();
+    }
+  });
+}
+```
