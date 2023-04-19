@@ -3,10 +3,11 @@ type Mission = Function;
 type ErrorHandler = (e: Error) => void;
 
 class Scheduler {
-  waitTasks: Mission[]; // 待执行的任务队列
-  excutingTasks: Mission[]; // 正在执行的任务队列
-  maxExcutingNum: number; // 允许同时运行的任务数量
-  errorHandler: ErrorHandler; // 错误边界
+  private waitTasks: Mission[]; // 待执行的任务队列
+  private excutingTasks: Mission[]; // 正在执行的任务队列
+  private maxExcutingNum: number; // 允许同时运行的任务数量
+  private errorHandler: ErrorHandler; // 错误边界
+
   constructor(maxExcutingNum: number, errorHandler?: ErrorHandler) {
     this.waitTasks = [];
     this.excutingTasks = [];
