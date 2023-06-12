@@ -17,6 +17,7 @@ import zh_CN from 'antd/es/locale/zh_CN';
 import { ButtonProps, ButtonType } from 'antd/lib/button';
 import { Button, Submit } from '@/components/button';
 import css from './style.less';
+import { isFunction } from '@/utils';
 
 enum DialogStatus {
   open,
@@ -54,6 +55,8 @@ interface DialogBinder {
 }
 
 declare type FCLike<T = void> = (props: DialogDeployProps<T>) => JSX.Element;
+
+type BeforeCloseCallback = (...args: any[]) => boolean |  Promise<boolean>;
 
 class StatusResolver<T, R, P> {
   type: FCLike<T> | ComponentType<DialogDeployProps<T, R>>;
@@ -141,6 +144,8 @@ export class DialogDeploy {
 
   private binder?: DialogBinder;
 
+  private beforeCloseCbMap: Map<any, Function> = new Map();
+
   register(binder: DialogBinder): void {
     this.binder = binder;
     this.resolve();
@@ -159,12 +164,17 @@ export class DialogDeploy {
    *
    * @param type  需要打开组件的class或function
    * @param params  窗口入参，将映射到窗口组件的props.params字段上
+   * @param beforeCloseCallback  窗口关闭操作拦截器
    */
   openDialog = <T, R>(
     type: FCLike<T> | ComponentType<DialogDeployProps<T, R>>,
     params?: T,
+    beforeCloseCallback?: BeforeCloseCallback 
   ): Promise<R> =>
     new Promise<R>(resolve => {
+      if (isFunction(beforeCloseCallback)) {
+        this.beforeCloseCbMap.set(type, beforeCloseCallback);
+      }
       this.dialogResolver.put(type, DialogStatus.open, params, resolve);
       this.resolve();
     });
@@ -175,10 +185,15 @@ export class DialogDeploy {
    * @param type  需要关闭组件的class或function
    * @param params  窗口关闭出参，通过resolve同type的Promise（通过openDialog产生的）传出数据
    */
-  closeDialog = <P, T>(
+  closeDialog = async <P, T>(
     type: FCLike<T> | ComponentType<DialogDeployProps<T>>,
     params?: P,
-  ): void => {
+  ): Promise<void> => {
+    const beforeCloseCallback = this.beforeCloseCbMap.get(type);
+    if (beforeCloseCallback) {
+      const close = await beforeCloseCallback(params);
+      if (!close) return; 
+    }
     this.dialogResolver.put(type, DialogStatus.close, params);
     this.resolve();
   };
@@ -227,6 +242,7 @@ interface DialogHookProps {
 export type OpenDialogCallback = <T = unknown, R = unknown, P extends T = T>(
   type: ComponentType<DialogDeployProps<T, R>>,
   params?: P,
+  beforeCloseCallback?: BeforeCloseCallback ,
 ) => Promise<R>;
 
 export type CloseDialogCallback = <T = unknown, R = unknown>(
@@ -382,9 +398,10 @@ export const useDialogMethods = (): [
   async function openDialog<T = unknown, R = unknown, P extends T = T>(
     type: FCLike<T> | ComponentType<DialogDeployProps<T, R>>,
     params?: P,
+    beforeCloseCallback?: BeforeCloseCallback
   ): Promise<R> {
     openings.current.add(type);
-    const result: R = await deploy.openDialog(type, params);
+    const result: R = await deploy.openDialog(type, params, beforeCloseCallback);
     if (openings.current.has(type)) {
       openings.current.delete(type);
     }

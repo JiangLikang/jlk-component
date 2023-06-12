@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styles from './index.less';
-import { Icon, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 import classnames from 'classnames';
 import 'antd/dist/antd.css';
 import PropTypes from 'prop-types';
@@ -42,8 +43,7 @@ class Index extends Component {
                 ) : (
                   <span className={styles.label}>{item.label}</span>
                 )}
-                <Icon
-                  type="close"
+                <CloseOutlined 
                   onClick={this.handleItemClick.bind(this, item)}
                   className={classnames(
                     styles.close,

@@ -1,4 +1,4 @@
-## 双表头 table
+## DoubleHeaderTable
 
 ```jsx
 import { DoubleHeaderTable } from 'jlk-component';

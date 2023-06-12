@@ -1,0 +1,28 @@
+@gap: 8px;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: @gap;
+  :global {
+    .ant-form-item {
+      margin: 0;
+    }
+  }
+
+  .img {
+    width: 40px;
+  }
+
+  .editorFooter {
+    display: flex;
+    align-items: center;
+    gap: @gap;
+    margin-left: auto;
+  }
+
+  .errMsg {
+    color: #ff4d4f;
+    font-size: 12px;
+  }
+}

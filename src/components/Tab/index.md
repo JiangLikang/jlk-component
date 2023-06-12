@@ -1,4 +1,4 @@
-## Tab 组件
+## Tab
 
 ```jsx
 import React from 'react';
