@@ -41,3 +41,28 @@ console.log(targetObj2.name); //targetObj2的name属性的值改变为 李四
 ```js
 let a = new Promise();
 ```
+
+## 单例模式
+```js
+function createSingleTonClass(className) {
+  let current = null;
+  return new Proxy(className, {
+    construct(target, ...args) {
+      if (!current) current = new className(...args);
+      return current;
+    }
+  })
+}
+
+class MyClass {
+
+}
+
+const MySingleTonClass = createSingleTonClass(MyClass);
+
+const insA = new MySingleTonClass();
+const insB = new MySingleTonClass();
+
+console.log(insA === insB); // true
+
+```
